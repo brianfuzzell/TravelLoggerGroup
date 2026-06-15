@@ -1,3 +1,4 @@
+using TravelLoggerGroup.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
