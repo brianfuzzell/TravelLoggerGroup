@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LuckyLogger.Models.DTOs;
+namespace TravelLoggerGroup.Models.DTOs;
 
 public class RecommendationDTO
 {

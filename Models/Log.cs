@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LuckyLogger.Models;
+namespace TravelLoggerGroup.Models;
 
 public class Log
 {
