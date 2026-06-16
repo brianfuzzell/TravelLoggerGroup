@@ -1,8 +1,10 @@
 using TravelLoggerGroup.Models;
+using TravelLoggerGroup.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,9 +59,25 @@ app.UseCors(options =>
 //City Endpoints
 
 //GET /api/cities - List all cities
+app.MapGet("/api/cities", (TravelLoggerDbContext db, IMapper mapper) =>
+{
+    return db.Cities.ProjectTo<CityDTO>(mapper.ConfigurationProvider).ToList();
+});
+
 
 //GET /api/cities/{id} -Get city details, with logs, users there, and recommendations
+app.MapGet("/api/cities/{id}", (TravelLoggerDbContext db, IMapper mapper, int id) =>
+{
+    var city = db.Cities
+    .Where(c => c.Id == id)
+    .Include(c => c.Logs)
+    .Include(c => c.Recommendations)
+        .ThenInclude(r => r.User)
+    .ProjectTo<CityDTO>(mapper.ConfigurationProvider)
+    .SingleOrDefault();
 
+    return city != null ? Results.Ok(city) : Results.NotFound();
+});
 
 
 //Log Endpoints
