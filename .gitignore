@@ -400,3 +400,4 @@ FodyWeavers.xsd
 # Migrations
 Migrations/
 appsettings.Development.json
+appsettings.development.json
