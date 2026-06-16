@@ -9,4 +9,6 @@ public class User
     public string Email { get; set; } 
     public string Description { get; set; }
     public string ImageUrl { get; set; }
+    public List<Log> Logs { get; set; }
+    public List<Recommendation> Recommendations { get; set; }
 }
