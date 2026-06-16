@@ -8,4 +8,6 @@ public class LogDTO
     public int CityId { get; set; }
     public int UserId { get; set; }
     public string Comment { get; set; }
+
+    public DateTime DateLogged { get; set; }
 }
