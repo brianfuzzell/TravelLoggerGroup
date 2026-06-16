@@ -399,5 +399,4 @@ FodyWeavers.xsd
 
 # Migrations
 Migrations/
-appsettings.development.json
 appsettings.Development.json
