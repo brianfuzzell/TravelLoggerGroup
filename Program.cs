@@ -199,11 +199,37 @@ app.MapGet("/api/cities/{cityId}/logs", (TravelLoggerDbContext db, IMapper mappe
 
 
 //Recommendation Endpoints
+app.MapGet("/api/recommendations", (TravelLoggerDbContext db, IMapper mapper) =>
+{
+    return db.Recommendations.ProjectTo<RecommendationDTO>(mapper.ConfigurationProvider).ToList();
+});
 
 //POST /api/recommendations - Create a new recommendation
+app.MapPost("/api/recommendations", (TravelLoggerDbContext db, Recommendation recommendation) =>
+{
+    db.Recommendations.Add(recommendation);
+    db.SaveChanges();
+
+    return Results.Created($"/api/recommendations/{recommendation.Id}", recommendation);
+});
 
 //PUT / api / recommendations /{ id}
+app.MapPut("/api/recommendations/{id}", (TravelLoggerDbContext db, Recommendation recommendation, int id) =>
+{
+    Recommendation recommendationToUpdate = db.Recommendations.SingleOrDefault(r => r.Id == id);
+    if (recommendationToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    recommendationToUpdate.CityId = recommendation.CityId;
+    recommendationToUpdate.UserId = recommendation.UserId;
+    recommendationToUpdate.Name = recommendation.Name;
+    recommendationToUpdate.Description = recommendation.Description;
 
+    db.SaveChanges();
+
+    return Results.NoContent();
+});
 
 //Update a recommendation
 
