@@ -224,4 +224,6 @@ app.MapGet("/api/cities/{cityId}/logs", (TravelLoggerDbContext db, IMapper mappe
 
 //POST /api/upvotes - Add an upvote to a recommendation
 
+//DELETE /api/upvotes/{id} - Remove an upvote from a recommendation
+
 app.Run();
