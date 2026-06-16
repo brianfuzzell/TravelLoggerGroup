@@ -9,4 +9,6 @@ public class LogDTO
     public int UserId { get; set; }
     public string Comment { get; set; }
     public UserDTO User { get; set; }
+
+    public DateTime DateLogged { get; set; }
 }

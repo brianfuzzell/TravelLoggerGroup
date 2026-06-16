@@ -9,4 +9,6 @@ public class Log
     public int UserId { get; set; }
     public string Comment { get; set; }
     public User User { get; set; }
+
+    public DateTime DateLogged { get; set; }
 }

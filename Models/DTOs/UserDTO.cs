@@ -9,4 +9,7 @@ public class UserDTO
     public string Email { get; set; } 
     public string Description { get; set; }
     public string ImageUrl { get; set; }
+
+    public List<LogDTO> Logs { get; set; }
+    public List<RecommendationDTO> Recommendations { get; set; }
 }

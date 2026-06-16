@@ -44,16 +44,16 @@ public class TravelLoggerDbContext : DbContext
 
         modelBuilder.Entity<Log>().HasData(new Log[]
         {
-            new Log { Id = 1,  UserId = 1, CityId = 1, Comment = "Loved the tram rides and pastel de nata. Great coworking scene." },
-            new Log { Id = 2,  UserId = 2, CityId = 2, Comment = "Super affordable and great expat community. Stayed three months." },
-            new Log { Id = 3,  UserId = 3, CityId = 3, Comment = "The transformation of this city is remarkable. Very safe in El Poblado." },
-            new Log { Id = 4,  UserId = 4, CityId = 4, Comment = "Canggu is chaotic but the vibes are unbeatable." },
-            new Log { Id = 5,  UserId = 5, CityId = 5, Comment = "Ruin bars and thermal baths. Cheapest euro capital I've found." },
-            new Log { Id = 6,  UserId = 6, CityId = 6, Comment = "Worked from a coffee shop overlooking Table Mountain. Surreal." },
-            new Log { Id = 7,  UserId = 7, CityId = 7, Comment = "The food alone is worth the trip. Incredible city energy." },
-            new Log { Id = 8,  UserId = 8, CityId = 8, Comment = "Totally underrated. Visa-free for 365 days for many passports." },
-            new Log { Id = 9,  UserId = 1, CityId = 5, Comment = "Second time here. The coworking spaces got even better." },
-            new Log { Id = 10, UserId = 3, CityId = 7, Comment = "Used it as a base for a month while working on a client project." },
+            new Log { Id = 1,  UserId = 1, CityId = 1, Comment = "Loved the tram rides and pastel de nata. Great coworking scene.",          DateLogged = new DateTime(2024, 1, 15) },
+            new Log { Id = 2,  UserId = 2, CityId = 2, Comment = "Super affordable and great expat community. Stayed three months.",           DateLogged = new DateTime(2024, 2, 10) },
+            new Log { Id = 3,  UserId = 3, CityId = 3, Comment = "The transformation of this city is remarkable. Very safe in El Poblado.",    DateLogged = new DateTime(2024, 3, 5) },
+            new Log { Id = 4,  UserId = 4, CityId = 4, Comment = "Canggu is chaotic but the vibes are unbeatable.",                           DateLogged = new DateTime(2024, 4, 20) },
+            new Log { Id = 5,  UserId = 5, CityId = 5, Comment = "Ruin bars and thermal baths. Cheapest euro capital I've found.",             DateLogged = new DateTime(2024, 5, 8) },
+            new Log { Id = 6,  UserId = 6, CityId = 6, Comment = "Worked from a coffee shop overlooking Table Mountain. Surreal.",             DateLogged = new DateTime(2024, 6, 14) },
+            new Log { Id = 7,  UserId = 7, CityId = 7, Comment = "The food alone is worth the trip. Incredible city energy.",                  DateLogged = new DateTime(2024, 7, 22) },
+            new Log { Id = 8,  UserId = 8, CityId = 8, Comment = "Totally underrated. Visa-free for 365 days for many passports.",             DateLogged = new DateTime(2024, 8, 3) },
+            new Log { Id = 9,  UserId = 1, CityId = 5, Comment = "Second time here. The coworking spaces got even better.",                    DateLogged = new DateTime(2024, 9, 18) },
+            new Log { Id = 10, UserId = 3, CityId = 7, Comment = "Used it as a base for a month while working on a client project.",           DateLogged = new DateTime(2024, 10, 7) },
         });
 
         modelBuilder.Entity<Recommendation>().HasData(new Recommendation[]
