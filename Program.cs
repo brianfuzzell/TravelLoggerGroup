@@ -91,9 +91,23 @@ app.MapGet("/api/cities/{id}", (TravelLoggerDbContext db, IMapper mapper, int id
 
 //DELETE /api/logs/{id} -Delete a log
 
-//GET /api/users/{userId}/ logs - List logs by user
+//GET /api/users/{userId}/logs - List logs by user
+app.MapGet("/api/users/{userId}/logs", (TravelLoggerDbContext db, IMapper mapper, int userId) =>
+{
+    return db.Logs
+        .Where(l => l.UserId == userId)
+        .ProjectTo<LogDTO>(mapper.ConfigurationProvider)
+        .ToList();
+});
 
-//GET /api/cities/{cityId}/ logs - List logs by city
+//GET /api/cities/{cityId}/logs - List logs by city
+app.MapGet("/api/cities/{cityId}/logs", (TravelLoggerDbContext db, IMapper mapper, int cityId) =>
+{
+    return db.Logs
+        .Where(l => l.CityId == cityId)
+        .ProjectTo<LogDTO>(mapper.ConfigurationProvider)
+        .ToList();
+});
 
 
 
