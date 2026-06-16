@@ -213,7 +213,7 @@ app.MapPost("/api/recommendations", (TravelLoggerDbContext db, Recommendation re
     return Results.Created($"/api/recommendations/{recommendation.Id}", recommendation);
 });
 
-//PUT / api / recommendations /{ id}
+//PUT /api/recommendations/{id} - Update a recommendation
 app.MapPut("/api/recommendations/{id}", (TravelLoggerDbContext db, Recommendation recommendation, int id) =>
 {
     Recommendation recommendationToUpdate = db.Recommendations.SingleOrDefault(r => r.Id == id);
@@ -231,14 +231,40 @@ app.MapPut("/api/recommendations/{id}", (TravelLoggerDbContext db, Recommendatio
     return Results.NoContent();
 });
 
-//Update a recommendation
-
 //DELETE /api/recommendations/{id} -Delete a recommendation
+app.MapDelete("/api/recommendations/{id}", (TravelLoggerDbContext db, int id) =>
+{
+    Recommendation recommendation = db.Recommendations.SingleOrDefault(r => r.Id == id);
+    if (recommendation == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.SaveChanges();
+
+    return Results.NoContent();
+});
 
 //GET /api/cities/{cityId}/ recommendations - List recommendations by city
+app.MapGet("/api/cities/{cityId}/recommendations", (TravelLoggerDbContext db, int cityId, IMapper mapper) =>
+{
+    var recommendations = db.Recommendations
+    .Where(c => c.CityId == cityId);
+
+    return recommendations.ProjectTo<CityRecommendationDTO>(mapper.ConfigurationProvider).ToList();
+});
 
 //GET /api/recommendations/{id} -Get recommendation details, including total number of upvotes
+app.MapGet("/api/recommendations/{id}", (TravelLoggerDbContext db, IMapper mapper, int id) =>
+{
+    var recommendation = db.Recommendations
+    .Where(r => r.Id == id)
+        .Include(r => r.UpVotes)
+    .ProjectTo<RecommendationDTO>(mapper.ConfigurationProvider)
+    .SingleOrDefault();
 
+    return recommendation != null ? Results.Ok(recommendation) : Results.NotFound();
+});
 
 
 //Upvote Endpoints
