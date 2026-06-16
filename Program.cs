@@ -83,14 +83,46 @@ app.MapGet("/api/cities/{id}", (TravelLoggerDbContext db, IMapper mapper, int id
 //Log Endpoints
 
 //POST /api/logs - Create a new log
+app.MapPost("/api/logs", (TravelLoggerDbContext db, IMapper mapper, LogDTO logDTO) =>
+{
+    Log log = mapper.Map<Log>(logDTO);
+    db.Logs.Add(log);
+    db.SaveChanges();
 
-//PUT / api / logs /{ id}
+    Log created = db.Logs
+        .Include(l => l.User)
+        .Single(l => l.Id == log.Id);
 
+    return Results.Created($"/api/logs/{created.Id}", mapper.Map<LogDTO>(created));
+});
 
-//Update a log
+//PUT /api/logs/{id} - Update a log
+app.MapPut("/api/logs/{id}", (TravelLoggerDbContext db, IMapper mapper, int id, LogDTO logDTO) =>
+{
+    Log log = db.Logs.SingleOrDefault(l => l.Id == id);
+    if (log == null)
+    {
+        return Results.NotFound();
+    }
 
-//DELETE /api/logs/{id} -Delete a log
+    mapper.Map(logDTO, log);
+    db.SaveChanges();
+    return Results.NoContent();
+});
 
+//DELETE /api/logs/{id} - Delete a log
+app.MapDelete("/api/logs/{id}", (TravelLoggerDbContext db, int id) =>
+{
+    Log log = db.Logs.SingleOrDefault(l => l.Id == id);
+    if (log == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Logs.Remove(log);
+    db.SaveChanges();
+    return Results.NoContent();
+});
 //GET /api/users/{userId}/logs - List logs by user
 app.MapGet("/api/users/{userId}/logs", (TravelLoggerDbContext db, IMapper mapper, int userId) =>
 {

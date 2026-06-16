@@ -11,7 +11,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<City, CityDTO>();
         CreateMap<CityDTO, City>();
         CreateMap<Log, LogDTO>();
-        CreateMap<LogDTO, Log>();
+        CreateMap<LogDTO, Log>().ForMember(l => l.Id, opt => opt.Ignore());;
         CreateMap<Recommendation, RecommendationDTO>();
         CreateMap<RecommendationDTO, Recommendation>();
         CreateMap<UpVote, UpVoteDTO>();
