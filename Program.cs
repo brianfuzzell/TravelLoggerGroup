@@ -145,6 +145,7 @@ app.MapGet("/api/cities/{id}", (TravelLoggerDbContext db, IMapper mapper, int id
 app.MapPost("/api/logs", (TravelLoggerDbContext db, IMapper mapper, LogDTO logDTO) =>
 {
     Log log = mapper.Map<Log>(logDTO);
+    log.DateLogged = DateTime.Now;
     db.Logs.Add(log);
     db.SaveChanges();
 
