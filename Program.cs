@@ -142,17 +142,59 @@ app.MapGet("/api/cities/{id}", (TravelLoggerDbContext db, IMapper mapper, int id
 //Log Endpoints
 
 //POST /api/logs - Create a new log
+app.MapPost("/api/logs", (TravelLoggerDbContext db, IMapper mapper, LogDTO logDTO) =>
+{
+    Log log = mapper.Map<Log>(logDTO);
+    log.DateLogged = DateTime.Now;
+    db.Logs.Add(log);
+    db.SaveChanges();
+    return Results.Created($"/api/logs/{log.Id}", mapper.Map<LogDTO>(log));
+});
 
-//PUT / api / logs /{ id}
+//PUT /api/logs/{id} - Update a log
+app.MapPut("/api/logs/{id}", (TravelLoggerDbContext db, IMapper mapper, int id, LogDTO logDTO) =>
+{
+    Log log = db.Logs.SingleOrDefault(l => l.Id == id);
+    if (log == null)
+    {
+        return Results.NotFound();
+    }
 
+    mapper.Map(logDTO, log);
+    db.SaveChanges();
+    return Results.NoContent();
+});
 
-//Update a log
+//DELETE /api/logs/{id} - Delete a log
+app.MapDelete("/api/logs/{id}", (TravelLoggerDbContext db, int id) =>
+{
+    Log log = db.Logs.SingleOrDefault(l => l.Id == id);
+    if (log == null)
+    {
+        return Results.NotFound();
+    }
 
-//DELETE /api/logs/{id} -Delete a log
+    db.Logs.Remove(log);
+    db.SaveChanges();
+    return Results.NoContent();
+});
+//GET /api/users/{userId}/logs - List logs by user
+app.MapGet("/api/users/{userId}/logs", (TravelLoggerDbContext db, IMapper mapper, int userId) =>
+{
+    return db.Logs
+        .Where(l => l.UserId == userId)
+        .ProjectTo<LogDTO>(mapper.ConfigurationProvider)
+        .ToList();
+});
 
-//GET /api/users/{userId}/ logs - List logs by user
-
-//GET /api/cities/{cityId}/ logs - List logs by city
+//GET /api/cities/{cityId}/logs - List logs by city
+app.MapGet("/api/cities/{cityId}/logs", (TravelLoggerDbContext db, IMapper mapper, int cityId) =>
+{
+    return db.Logs
+        .Where(l => l.CityId == cityId)
+        .ProjectTo<LogDTO>(mapper.ConfigurationProvider)
+        .ToList();
+});
 
 
 
@@ -176,5 +218,7 @@ app.MapGet("/api/cities/{id}", (TravelLoggerDbContext db, IMapper mapper, int id
 //Upvote Endpoints
 
 //POST /api/upvotes - Add an upvote to a recommendation
+
+//DELETE /api/upvotes/{id} - Remove an upvote from a recommendation
 
 app.Run();
