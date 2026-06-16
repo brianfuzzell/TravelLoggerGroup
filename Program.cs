@@ -2,6 +2,7 @@ using TravelLoggerGroup.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfiles>());
 
 builder.Services.AddCors();
 
@@ -19,7 +21,6 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddNpgsql<TravelLoggerDbContext>(builder.Configuration["TravelLoggerDbConnectionString"]);
 
 var app = builder.Build();
-
 // Comment out HTTPS redirection for now to simplify testing
 // app.UseHttpsRedirection();
 
@@ -34,5 +35,69 @@ app.UseCors(options =>
 });
 
 // Add all endpoints here
+
+
+
+//User Endpoints
+
+//POST / api / users - Register a new user
+
+//GET / api / users / signin /{ email}
+
+//Sign in a user by email
+
+//GET /api/users/{id} -Get user profile, with all their logs and recommendations
+
+//PUT /api/users/{id} -Update user profile
+
+//GET /api/cities/{cityId}/ users - List users by city (based on their most recent log)
+
+
+
+//City Endpoints
+
+//GET /api/cities - List all cities
+
+//GET /api/cities/{id} -Get city details, with logs, users there, and recommendations
+
+
+
+//Log Endpoints
+
+//POST /api/logs - Create a new log
+
+//PUT / api / logs /{ id}
+
+
+//Update a log
+
+//DELETE /api/logs/{id} -Delete a log
+
+//GET /api/users/{userId}/ logs - List logs by user
+
+//GET /api/cities/{cityId}/ logs - List logs by city
+
+
+
+//Recommendation Endpoints
+
+//POST /api/recommendations - Create a new recommendation
+
+//PUT / api / recommendations /{ id}
+
+
+//Update a recommendation
+
+//DELETE /api/recommendations/{id} -Delete a recommendation
+
+//GET /api/cities/{cityId}/ recommendations - List recommendations by city
+
+//GET /api/recommendations/{id} -Get recommendation details, including total number of upvotes
+
+
+
+//Upvote Endpoints
+
+//POST /api/upvotes - Add an upvote to a recommendation
 
 app.Run();
