@@ -38,7 +38,6 @@ app.UseCors(options =>
 
 // Add all endpoints here
 
-
 //User Endpoints
 
 //POST / api / users 
@@ -52,7 +51,6 @@ app.MapPost("/api/users", (TravelLoggerDbContext db, UserDTO userDTO, IMapper ma
 });
 // note: automap converts userDTO into a user model, gets added to db and saves. returns 201 when the user is mapped back to the DTO so it confirms it saved the new user information
 
-
 //GET / api / users / signin /{ email}
 //Sign in a user by email
 app.MapGet("/api/users/signin/{email}", (TravelLoggerDbContext db, string email, IMapper mapper) =>
@@ -64,7 +62,6 @@ app.MapGet("/api/users/signin/{email}", (TravelLoggerDbContext db, string email,
     return user != null ? Results.Ok(user) : Results.NotFound();
 });
 // note: searches users for one that has an email that matches, then it maps it to the UserDTO (it does this with ProjectTo method) then returns it. but returns 404 if theres no match
-
 
 //GET /api/users/{id} 
 //Get user profile, with all their logs and recommendations
@@ -79,7 +76,6 @@ app.MapGet("/api/users/{id}", (TravelLoggerDbContext db, int id, IMapper mapper)
     return user != null ? Results.Ok(user) : Results.NotFound();
 });
 // note: essentially the same concept as the /signin/{email} getter, but it locates the id and checks to find a match. uses .Include to also grab the users logs + recommendations associated with them in the database. .ProjectTo maps all of that info(including the nested collections) to the userDTO
-
 
 //PUT /api/users/{id}
 //Update user profile
@@ -100,7 +96,6 @@ app.MapPut("/api/users/{id}", (TravelLoggerDbContext db, int id, UserDTO userDTO
 });
 // note: finds existing user, or returns 404. ONLY directly updates the description + imageURL. cannot update email due to it being the login identifier. saves it. returns .NoContent 204 to say it worked
 
-
 //GET /api/cities/{cityId}/ users
 //List users by city (based on their most recent log)
 app.MapGet("/api/cities/{cityId}/users", (TravelLoggerDbContext db, int cityId, IMapper mapper) =>
@@ -114,7 +109,6 @@ app.MapGet("/api/cities/{cityId}/users", (TravelLoggerDbContext db, int cityId, 
 });
 // note: finds users who have a log for at least 1 city. .Any checks the users logs to see if any have a log w a cityId that matches. returns that list. orderbydescending checks datelogged on all logs, so it can go by the most recent log for whatever user it brings back.
 
-
 //City Endpoints
 
 //GET /api/cities - List all cities
@@ -122,7 +116,6 @@ app.MapGet("/api/cities", (TravelLoggerDbContext db, IMapper mapper) =>
 {
     return db.Cities.ProjectTo<CityDTO>(mapper.ConfigurationProvider).ToList();
 });
-
 
 //GET /api/cities/{id} -Get city details, with logs, users there, and recommendations
 app.MapGet("/api/cities/{id}", (TravelLoggerDbContext db, IMapper mapper, int id) =>
@@ -137,7 +130,6 @@ app.MapGet("/api/cities/{id}", (TravelLoggerDbContext db, IMapper mapper, int id
 
     return city != null ? Results.Ok(city) : Results.NotFound();
 });
-
 
 //Log Endpoints
 
@@ -178,6 +170,7 @@ app.MapDelete("/api/logs/{id}", (TravelLoggerDbContext db, int id) =>
     db.SaveChanges();
     return Results.NoContent();
 });
+
 //GET /api/users/{userId}/logs - List logs by user
 app.MapGet("/api/users/{userId}/logs", (TravelLoggerDbContext db, IMapper mapper, int userId) =>
 {
@@ -196,24 +189,73 @@ app.MapGet("/api/cities/{cityId}/logs", (TravelLoggerDbContext db, IMapper mappe
         .ToList();
 });
 
-
-
 //Recommendation Endpoints
+app.MapGet("/api/recommendations", (TravelLoggerDbContext db, IMapper mapper) =>
+{
+    return db.Recommendations.ProjectTo<RecommendationDTO>(mapper.ConfigurationProvider).ToList();
+});
 
 //POST /api/recommendations - Create a new recommendation
+app.MapPost("/api/recommendations", (TravelLoggerDbContext db, Recommendation recommendation) =>
+{
+    db.Recommendations.Add(recommendation);
+    db.SaveChanges();
 
-//PUT / api / recommendations /{ id}
+    return Results.Created($"/api/recommendations/{recommendation.Id}", recommendation);
+});
 
+//PUT /api/recommendations/{id} - Update a recommendation
+app.MapPut("/api/recommendations/{id}", (TravelLoggerDbContext db, Recommendation recommendation, int id) =>
+{
+    Recommendation recommendationToUpdate = db.Recommendations.SingleOrDefault(r => r.Id == id);
+    if (recommendationToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    recommendationToUpdate.CityId = recommendation.CityId;
+    recommendationToUpdate.UserId = recommendation.UserId;
+    recommendationToUpdate.Name = recommendation.Name;
+    recommendationToUpdate.Description = recommendation.Description;
 
-//Update a recommendation
+    db.SaveChanges();
+
+    return Results.NoContent();
+});
 
 //DELETE /api/recommendations/{id} -Delete a recommendation
+app.MapDelete("/api/recommendations/{id}", (TravelLoggerDbContext db, int id) =>
+{
+    Recommendation recommendation = db.Recommendations.SingleOrDefault(r => r.Id == id);
+    if (recommendation == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.SaveChanges();
+
+    return Results.NoContent();
+});
 
 //GET /api/cities/{cityId}/ recommendations - List recommendations by city
+app.MapGet("/api/cities/{cityId}/recommendations", (TravelLoggerDbContext db, int cityId, IMapper mapper) =>
+{
+    var recommendations = db.Recommendations
+    .Where(c => c.CityId == cityId);
+
+    return recommendations.ProjectTo<CityRecommendationDTO>(mapper.ConfigurationProvider).ToList();
+});
 
 //GET /api/recommendations/{id} -Get recommendation details, including total number of upvotes
+app.MapGet("/api/recommendations/{id}", (TravelLoggerDbContext db, IMapper mapper, int id) =>
+{
+    var recommendation = db.Recommendations
+    .Where(r => r.Id == id)
+        .Include(r => r.UpVotes)
+    .ProjectTo<RecommendationDTO>(mapper.ConfigurationProvider)
+    .SingleOrDefault();
 
-
+    return recommendation != null ? Results.Ok(recommendation) : Results.NotFound();
+});
 
 //Upvote Endpoints
 

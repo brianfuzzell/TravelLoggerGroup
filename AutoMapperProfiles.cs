@@ -16,5 +16,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<RecommendationDTO, Recommendation>();
         CreateMap<UpVote, UpVoteDTO>();
         CreateMap<UpVoteDTO, UpVote>();
+        CreateMap<Recommendation, CityRecommendationDTO>();
+        CreateMap<CityRecommendationDTO, Recommendation>();
     }
 }
