@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TravelLoggerGroup.Models;
+namespace TravelLoggerGroup.Models.DTOs;
 
-public class Recommendation
+public class CityRecommendationDTO
 {
     public int Id { get; set; } 
     public int CityId { get; set; } 
@@ -10,6 +10,4 @@ public class Recommendation
     [Required]
     public string Name { get; set; }
     public string Description { get; set; }
-    public User User { get; set; } 
-    public List<UpVote> UpVotes { get; set; } 
 }
