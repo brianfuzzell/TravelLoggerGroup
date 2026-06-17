@@ -218,7 +218,24 @@ app.MapGet("/api/cities/{cityId}/logs", (TravelLoggerDbContext db, IMapper mappe
 //Upvote Endpoints
 
 //POST /api/upvotes - Add an upvote to a recommendation
-
+app.MapPost("/api/upvotes", (TravelLoggerDbContext db, IMapper mapper, UpVoteDTO upVoteDTO) =>
+{
+    UpVote upVote = mapper.Map<UpVote>(upVoteDTO);
+    db.UpVotes.Add(upVote);
+    db.SaveChanges();
+    return Results.Created($"/api/upvotes/{upVote.Id}", mapper.Map<UpVoteDTO>(upVote));
+});
 //DELETE /api/upvotes/{id} - Remove an upvote from a recommendation
+app.MapDelete("/api/upvotes/{id}", (TravelLoggerDbContext db, int id) =>
+{
+    UpVote upVote = db.UpVotes.SingleOrDefault(uv => uv.Id == id);
+    if (upVote == null)
+    {
+        return Results.NotFound();
+    }
 
+    db.UpVotes.Remove(upVote);
+    db.SaveChanges();
+    return Results.NoContent();
+});
 app.Run();
